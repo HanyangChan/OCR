@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math OCR</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #result-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upload an image of a handwritten math equation</h1>
+    <input type="file" id="image-upload" accept="image/*">
+    <div id="result-container">
+        <p>Result will be displayed here.</p>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('image-upload');
+        const resultContainer = document.getElementById('result-container');
+
+        imageUpload.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/ocr/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const latex = data.latex;
+                    resultContainer.innerHTML = `$$${latex}$$`;
+                    MathJax.typeset(); // Re-render MathJax
+                } else {
+                    resultContainer.innerHTML = `<p>Error: ${response.statusText}</p>`;
+                }
+            } catch (error) {
+                resultContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+
+</body>
+</html>
