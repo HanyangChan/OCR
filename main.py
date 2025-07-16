@@ -7,6 +7,7 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
 import io
 
+#main code
 # --- Model and Processor Loading ---
 # It's best practice to load the model once when the application starts.
 model_name = "fhswf/TrOCR_Math_handwritten"
